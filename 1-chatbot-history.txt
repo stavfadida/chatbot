@@ -1,0 +1,13 @@
+Write a short LangGraph chatbot in Python for students, to run in Google Colab.
+- Install langgraph, langchain and langchain-openai.
+- Read the API key from the Colab secret OPENAI_API_KEY with google.colab.userdata, and set it in os.environ["OPENAI_API_KEY"].
+- Model: init_chat_model("openai:gpt-6-luna").
+- State: messages with the add_messages reducer.
+- One node, chatbot. It calls the model with [SYSTEM] + state["messages"] and returns only the reply. SYSTEM is a SystemMessage that limits the bot to geography and politely refuses other topics.
+- Graph: START -> chatbot -> END. Compile with no checkpointer.
+- Write a while loop outside the graph. Each turn:
+  - read input
+  - stop on "stop"
+  - call graph.invoke({"messages": history + [HumanMessage(text)]})
+  - set history = result["messages"]
+  - print the reply
